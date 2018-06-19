@@ -1,6 +1,7 @@
 #include "andres/marray.hxx"
 
 #include <algorithm>
+#include <array>
 
 // #include <numpy/arrayobject.h>
 

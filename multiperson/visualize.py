@@ -12,9 +12,9 @@ from util import visualize
 
 
 min_match_dist = 200
-marker_size = 5
+marker_size = 0
 
-draw_conf_min_count = 3
+draw_conf_min_count = 2
 
 
 def get_ref_points(person_conf):
@@ -81,33 +81,34 @@ class PersonDraw:
         color_assignment = dict()
 
         # MA: assign same color to matching body configurations
-        if self.prev_person_conf.shape[0] > 0 and person_conf.shape[0] > 0:
-            ref_points = get_ref_points(person_conf)
-            prev_ref_points = get_ref_points(self.prev_person_conf)
+        # if self.prev_person_conf.shape[0] > 0 and person_conf.shape[0] > 0:
+        #     ref_points = get_ref_points(person_conf)
+        #     prev_ref_points = get_ref_points(self.prev_person_conf)
 
-            # MA: this munkres implementation assumes that num(rows) >= num(columns)
-            if person_conf.shape[0] <= self.prev_person_conf.shape[0]:
-                cost_matrix = scipy.spatial.distance.cdist(ref_points, prev_ref_points)
-            else:
-                cost_matrix = scipy.spatial.distance.cdist(prev_ref_points, ref_points)
+        #     # MA: this munkres implementation assumes that num(rows) >= num(columns)
+        #     if person_conf.shape[0] <= self.prev_person_conf.shape[0]:
+        #         cost_matrix = scipy.spatial.distance.cdist(ref_points, prev_ref_points)
+        #     else:
+        #         cost_matrix = scipy.spatial.distance.cdist(prev_ref_points, ref_points)
 
-            assert (cost_matrix.shape[0] <= cost_matrix.shape[1])
+        #     assert (cost_matrix.shape[0] <= cost_matrix.shape[1])
 
-            conf_assign = self.mk.compute(cost_matrix)
+        #     conf_assign = self.mk.compute(cost_matrix)
 
-            if person_conf.shape[0] > self.prev_person_conf.shape[0]:
-                conf_assign = [(idx2, idx1) for idx1, idx2 in conf_assign]
-                cost_matrix = cost_matrix.T
+        #     if person_conf.shape[0] > self.prev_person_conf.shape[0]:
+        #         conf_assign = [(idx2, idx1) for idx1, idx2 in conf_assign]
+        #         cost_matrix = cost_matrix.T
 
-            for pidx1, pidx2 in conf_assign:
-                if cost_matrix[pidx1][pidx2] < min_match_dist:
-                    color_assignment[pidx1] = self.prev_color_assignment[pidx2]
+        #     for pidx1, pidx2 in conf_assign:
+        #         if cost_matrix[pidx1][pidx2] < min_match_dist:
+        #             color_assignment[pidx1] = self.prev_color_assignment[pidx2]
 
-        print("#tracked objects:", len(color_assignment))
+        # print("#tracked objects:", len(color_assignment))
 
         free_coloridx = sorted(list(set(range(len(self.track_colors))).difference(set(color_assignment.values()))),
                                reverse=True)
 
+        n = 0
         for pidx in range(num_people):
             # color_idx = pidx % len(self.track_colors)
             if pidx in color_assignment:
@@ -130,14 +131,15 @@ class PersonDraw:
                 p1 = (int(math.floor(person_conf[pidx, kidx1, 0])), int(math.floor(person_conf[pidx, kidx1, 1])))
                 p2 = (int(math.floor(person_conf[pidx, kidx2, 0])), int(math.floor(person_conf[pidx, kidx2, 1])))
 
-                if check_point(p1[0], p1[1], minx, miny, maxx, maxy) and check_point(p2[0], p2[1], minx, miny, maxx,
-                                                                                     maxy):
+                if check_point(p1[0], p1[1], minx, miny, maxx, maxy) and check_point(p2[0], p2[1], minx, miny, maxx, maxy):
                     color = np.array(self.track_colors[color_idx][::-1], dtype=np.float64) / 255.0
-                    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], marker='o', linestyle='solid', linewidth=2.0, color=color)
+                    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], marker='o', linestyle='solid', linewidth=1.0, color=color)
+            n+=1
+        
+        print("有%d人"%n)
 
-
-        self.prev_person_conf = person_conf
-        self.prev_color_assignment = color_assignment
+        # self.prev_person_conf = person_conf
+        # self.prev_color_assignment = color_assignment
 
 
 

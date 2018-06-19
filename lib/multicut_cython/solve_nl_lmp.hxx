@@ -1,6 +1,6 @@
 #define HAVE_CPP11_INITIALIZER_LISTS
 #include "andres/marray.hxx"
-
+#include <array>
 #include "nl-lmp.hxx"
 
 #include <algorithm>
