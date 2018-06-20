@@ -133,7 +133,7 @@ class PersonDraw:
 
                 if check_point(p1[0], p1[1], minx, miny, maxx, maxy) and check_point(p2[0], p2[1], minx, miny, maxx, maxy):
                     color = np.array(self.track_colors[color_idx][::-1], dtype=np.float64) / 255.0
-                    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], marker='o', linestyle='solid', linewidth=1.0, color=color)
+                    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], linestyle='solid', linewidth=1.0, color=color)
             n+=1
         
         print("有%d人"%n)
