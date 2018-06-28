@@ -4,15 +4,15 @@ import tensorflow as tf
 
 from nnet.net_factory import pose_net
 
-
 def setup_pose_prediction(cfg):
     inputs = tf.placeholder(tf.float32, shape=[cfg.batch_size, None, None, 3])
 
     outputs = pose_net(cfg).test(inputs)
 
     restorer = tf.train.Saver()
-
-    sess = tf.Session()
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.5)
+    config = tf.ConfigProto(gpu_options=gpu_options)
+    sess = tf.Session(config=config)
 
     sess.run(tf.global_variables_initializer())
     sess.run(tf.local_variables_initializer())

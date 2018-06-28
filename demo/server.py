@@ -15,6 +15,7 @@ from multiperson.predict import SpatialModel, eval_graph, get_person_conf_multic
 import time
 from flask import Flask, request, jsonify
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 app = Flask(__name__)
 
 
