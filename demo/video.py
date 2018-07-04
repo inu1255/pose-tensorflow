@@ -17,6 +17,7 @@ parse.add_argument("-i", "--input", default="cutout.MP4", help= "the input file 
 parse.add_argument("-o", "--output", help= "the output dir")
 parse.add_argument("--api", default="", help= "api such as: http://127.0.0.1:3000")
 parse.add_argument("--fps", type=int, default=10, help= "fps")
+parse.add_argument("--show", action='store_true', default=False, help= "show cv window")
 args = parse.parse_args()
 
 def distence(point1, point2):
@@ -30,8 +31,9 @@ class Detector(object):
 		self.cnt = 0
 		self.total = 0
 		self.cache = Frame([])
-		if not os.path.exists('demo/cache/%s'%self.device):
-			os.mkdir('demo/cache/%s'%self.device)
+		self.cache_dir = 'demo/cache/%s'%os.path.basename(self.device)
+		if not os.path.exists(self.cache_dir):
+			os.mkdir(self.cache_dir)
 	
 	def run(self):
 		prev_cnt = 0
@@ -45,7 +47,7 @@ class Detector(object):
 			if cnt <= prev_cnt:
 				continue
 			prev_cnt = cnt
-			cache_file =  'demo/cache/%s/%d'%(self.device,self.cnt)
+			cache_file = '%s/%d'%(self.cache_dir,self.cnt)
 			if os.path.exists(cache_file):
 				with open(cache_file,'rb') as f:
 					data = pickle.load(f)
@@ -62,17 +64,19 @@ class Detector(object):
 					data = detection(frame)
 				with open(cache_file,'wb') as f:
 					pickle.dump(data, f)
-			for person in data:
-				for point in person:
-					if point[0]:
-						cv2.circle(frame, (int(point[0]),int(point[1])), 1, (0,0,255),1)
+			if args.show:
+				for person in data:
+					for point in person:
+						if point[0]:
+							cv2.circle(frame, (int(point[0]),int(point[1])), 1, (0,0,255),1)
 			self.cache = self.cache.concat(Frame(data))
 			total += self.cache.clear()
-			self.cache.draw(frame)
 
-			cv2.imshow('imshow',frame)
-			if cv2.waitKey(10)==27:
-				break
+			if args.show:
+				self.cache.draw(frame)
+				cv2.imshow('imshow',frame)
+				if cv2.waitKey(10)==27:
+					break
 		total += self.cache.count()
 		print('total:',total)
 		return total
