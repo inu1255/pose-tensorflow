@@ -3,3 +3,4 @@
 demo/cache
 lib/
 models/
+__pycache__/

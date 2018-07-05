@@ -10,7 +10,7 @@ def setup_pose_prediction(cfg):
     outputs = pose_net(cfg).test(inputs)
 
     restorer = tf.train.Saver()
-    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.5)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=cfg.per_process_gpu_memory_fraction)
     config = tf.ConfigProto(gpu_options=gpu_options)
     sess = tf.Session(config=config)
 
