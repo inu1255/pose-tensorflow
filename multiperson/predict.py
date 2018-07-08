@@ -20,12 +20,8 @@ def logit_transform(p):
 
 
 def eval_graph(sm, detections):
-
-    time_start = time.time()
-
     unary_prob = detections.conf
     coordinates = detections.coord
-    pairwise_regr = detections.pairwise
 
     cidx_list = range(0, sm.num_keypoints)
     #cidx_list = [0, 1, 2]
@@ -92,8 +88,6 @@ def eval_graph(sm, detections):
 
         unary_array_solver = unary_array if logit_in_solver else logit_transform(unary_array)
         pw_array_solver = pw_array if logit_in_solver else logit_transform(pw_array)
-
-        time_start = time.time()
 
         res = solve_nl_lmp(unary_array_solver, pwidx_array, pw_array_solver,
                           is_sparse_graph, solver_type, do_suppression, logit_in_solver)
